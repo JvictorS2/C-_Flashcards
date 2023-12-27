@@ -1,0 +1,14 @@
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\bin\Debug\net7.0\Flashcard_Project.exe
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\bin\Debug\net7.0\Flashcard_Project.deps.json
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\bin\Debug\net7.0\Flashcard_Project.runtimeconfig.json
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\bin\Debug\net7.0\Flashcard_Project.dll
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\bin\Debug\net7.0\Flashcard_Project.pdb
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.GeneratedMSBuildEditorConfig.editorconfig
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.AssemblyInfoInputs.cache
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.AssemblyInfo.cs
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.csproj.CoreCompileInputs.cache
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.dll
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\refint\Flashcard_Project.dll
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.pdb
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\Flashcard_Project.genruntimeconfig.cache
+C:\Programacao\Projetinhos\projetinhos_Back-End\Flashcard_Project\obj\Debug\net7.0\ref\Flashcard_Project.dll
