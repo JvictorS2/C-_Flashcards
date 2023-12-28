@@ -71,14 +71,14 @@ public class Arquivo
     }
 
     //Method
-    public virtual void CreatOpenArquivo()
+    public virtual void CreatOpenArquivo(bool resert=true)
     {
         /* 
             Cria um arquivo no caminho informado. o parâmetro é a extensão do arquivo.
             Dev tip: Ele pode sofre overrider por classe filhas.
          */
         
-        _sw = new StreamWriter(Path + Name + Extension, true, Encoding.UTF8);
+        _sw = new StreamWriter(Path + Name + Extension, resert, Encoding.UTF8);
 
     }
 
@@ -110,6 +110,19 @@ public class Arquivo
         _sw.WriteLine(mensage);
     }
 
+    public void RemoveLineArquivo(int whichLine)
+    {
+        // Lê todas as linhas do arquivo, exceto a que queremos excluir
+        var lines = ReadAllLinesArquivo();
+
+        // Exclui a linha desejada
+        lines = lines.Where((line, index) => index + 1 != whichLine).ToArray();
+
+        // Reescreve o arquivo com as linhas restantes
+        File.WriteAllLines(Path + Name + Extension, lines);
+
+    }
+    
     public void CloseArquivo()
     {
         /* 
@@ -118,13 +131,13 @@ public class Arquivo
         _sw.Close();
     }
 
-    public string[] ReadAllLines()
+    public string[] ReadAllLinesArquivo()
     {
         /* 
             Devolve um array com todas as linhas do arquivo.
         */
-        string[] array = File.ReadAllLines(Path + Name + Extension);
-        return array;
+        return File.ReadAllLines(Path + Name + Extension);
+       
     }
 
 }

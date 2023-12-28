@@ -8,7 +8,6 @@ public class Cards
     private string _stats;
 
     //Propreties
-
     public string CardFront
     {
         get

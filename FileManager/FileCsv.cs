@@ -1,10 +1,10 @@
-
 using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Common;
 namespace TricksFile;
 #nullable disable
 
@@ -42,22 +42,9 @@ public class FileCsv : Arquivo
 
     //Method for classe Filecsv
 
-    public void addObjectCard(Cards card)
-    {
-        /* 
-            Transforma o objeto card em um array e depois escreve no arquivo csv os valores desse array
-        */
-        _id++;
-        string[] array = new string[4];
-        array[0] = Convert.ToString(_id);
-        array[1] = card.CardFront;
-        array[2] = card.CardBack;
-        array[3] = card.Stats;
+    //CRUD
 
-        RecordMensage(array);
-    }
-
-    public override void CreatOpenArquivo()
+    public override void CreatOpenArquivo(bool resert=true)
     {
         /* 
             Cria um arquivo e abre o arquivo para uso.
@@ -68,32 +55,24 @@ public class FileCsv : Arquivo
         */
 
         //Cria o arquivo
-        _sw = new StreamWriter(Path + Name + Extension, true, Encoding.UTF8);
+        _sw = new StreamWriter(Path + Name + Extension, resert, Encoding.UTF8);
         _sw.Close();
         
         //Escreve a primeira linha caso ela não exista.
-        if(this.ReadAllLines().Length == 0)
+        if(this.ReadAllLinesArquivo().Length == 0)
         {
-            _sw = new StreamWriter(Path + Name + Extension, true, Encoding.UTF8);
-            RecordMensage(FirstLine);
+            _sw = new StreamWriter(Path + Name + Extension, resert, Encoding.UTF8);
+            RecordMensage(ConvertArraytoString(FirstLine));
             _sw.Close();
         }
-       
-        if(this.ReadAllLines().Length > 1)
-            _id = CurrentId();
 
-        _sw = new StreamWriter(Path + Name + Extension, true, Encoding.UTF8);
+        //Recupera o id atual do arquivo, o ultimo id do arquivo que sempre será o id atual.
+        if(this.ReadAllLinesArquivo().Length > 1)
+            _id = GetCurrentId();
 
-    }
+        //Abre o arquivo
+        _sw = new StreamWriter(Path + Name + Extension, resert, Encoding.UTF8);
 
-    public void RecordMensage(string[] mensage)
-    {
-        /* 
-            Method overchage
-            Receber um array convert em uma string separada por ";" e escreve no arquivo csv.
-         */
-        
-        RecordMensage(ConvertArraytoString(mensage));
     }
 
     public override void ReadArquivo()
@@ -138,7 +117,36 @@ public class FileCsv : Arquivo
         _sr.Close();
     }
 
-    //Method into classe filecsv
+    public void UpdateLineArquivo(int numberLine, Cards card)
+    {
+        //Converte todas as linhas do arquivo em um array
+        string[] lines = ReadAllLinesArquivo();
+
+        //Atualiza a linha desejada
+        lines[numberLine - 1] = ConvertArraytoString(ConvertObjectCardToArray(card));
+
+        // Reescreve o arquivo
+        File.WriteAllLines(Path + Name + Extension, lines);
+    }
+
+   public void RemvoeLineById(string id)
+   {
+
+        RemoveLineArquivo(GetLineNumbeById(id));
+   }
+
+    public void addObjectCard(Cards card)
+    {
+        /* 
+            Transforma o objeto card em um array e depois escreve no arquivo csv os valores desse array.
+            paramentro: objeto card.
+        */
+        _id++;
+        string[] lineCard = ConvertObjectCardToArray(card);
+        RecordMensage(ConvertArraytoString(lineCard));
+    }
+
+    //Methods de auxilio da classe fileCsv
     private string ConvertArraytoString(string[] array)
     {
         /* 
@@ -168,15 +176,100 @@ public class FileCsv : Arquivo
         return array;
     }
 
-    private int CurrentId()
+    private string[] ConvertObjectCardToArray(Cards card)
+    {
+        string[] array = new string[4];
+        array[0] = Convert.ToString(_id);
+        array[1] = card.CardFront;
+        array[2] = card.CardBack;
+        array[3] = card.Stats;
+
+        return array;
+    }
+
+    private string[] ConvertObjectCardToArray(Cards card, string id)
+    {
+        string[] array = new string[4];
+        array[0] = Convert.ToString(id);
+        array[1] = card.CardFront;
+        array[2] = card.CardBack;
+        array[3] = card.Stats;
+
+        return array;
+    }
+    
+    private int GetCurrentId()
     {
         /* 
             Retrona o valor do Id da ultima linha do arquivo.
         */
-        string[] Allarray = ReadAllLines();
-        //WriteLine(Allarray.Length);
-        //WriteLine(Allarray[Allarray.Length - 1]);
+        // Ler todas as linhas do arquivo
+        string[] Allarray = ReadAllLinesArquivo();
+        
+        // Transforma a ultima linha do arquivo em um array
         string[] arrayLastLine = ConvertStringToArray(Allarray[Allarray.Length - 1]);
+
+        // Retorna o id do array convertido para int
         return Convert.ToInt32(arrayLastLine[0]);
     }
+    
+    public string GetLineByid(string id)
+    {
+        /* 
+            Recebe um id, e retornar a linha que possui este id caso encontre
+            caso não a encontre irá imprimir uma mensagem de aviso e irá retornar null.
+            parâmetro:
+                O id da linha em que deseja obter o valor.
+            usado em:
+                GetLineNumberId()
+        */
+
+        // array de string com todas as linhas do arquivo.
+        string[] linesString = ReadAllLinesArquivo();
+
+        // array de array de string com todas as linhas do arquivo
+        string[][] linesArray = new string[linesString.Length][];
+
+        // converte todos o itens do "linesString" em array e adiciona no array "linesArray"
+        for (int i = 0; i < linesString.Length; i++)
+        {
+            linesArray[i] = ConvertStringToArray(linesString[i]);
+        }
+
+        // Procura pelo array que possui a id informado e atribui a um array
+        string[][] result = linesArray.Where(array => array[0].Equals(id)).ToArray();
+
+        // try catch para informa que o array não foi encontrado pois aciona uma exception
+        try
+        {
+            //WriteLine(ConvertArraytoString(result[0]));
+            return ConvertArraytoString(result[0]);
+        }
+        catch(IndexOutOfRangeException)
+        {
+            WriteLine("Id wasn't found!");
+        }
+
+        return null;
+ 
+    }
+
+    private int GetLineNumbeById(string id)
+    {
+        string[] linesStrings = ReadAllLinesArquivo();
+
+        string lineWished = GetLineByid(id);
+
+        for(int i = 0; i < linesStrings.Length; i++)
+        {
+            if(linesStrings[i].Equals(lineWished))
+            {
+                return i + 1;
+                
+            }
+        }
+
+        return -1;
+    }
+
 }
