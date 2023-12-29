@@ -1,4 +1,4 @@
-﻿using TricksFile;
+using TricksFile;
 
 void PrintWellcome()
 {
@@ -85,7 +85,7 @@ void UpdateCard(FileCsv fileCsv)
 {
     /* 
         Update a card
-        TODO* 
+        
     */
 }
 
