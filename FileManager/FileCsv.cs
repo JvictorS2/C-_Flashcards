@@ -8,7 +8,20 @@ using System.Data.Common;
 namespace TricksFile;
 #nullable disable
 
-public class FileCsv : Arquivo
+/* 
+    OBS1: O termo array nesta classe se refere a um modelo array com os dados de uma linha do arquivo 
+        ex: ["id","colunm2","colunm3",...]
+    OBS2: O termo string nesta classe se refere a um modelo string com os dados de uma linha do arquivo
+        ex: id;colunm2;colunm3;...
+    OBS3:
+        O arquivo deve ter obrigatóriamente a coluna id e ela tem que está localizada no no começo de cada linha.
+        TODO*: Fazer isto ser automático.
+*/
+
+
+
+
+public  class FileCsv : Arquivo
 {
 
     private string[] _fisrtLine;
@@ -117,24 +130,6 @@ public class FileCsv : Arquivo
         _sr.Close();
     }
 
-    public void UpdateLineArquivo(int numberLine, Cards card)
-    {
-        //Converte todas as linhas do arquivo em um array
-        string[] lines = ReadAllLinesArquivo();
-
-        //Atualiza a linha desejada
-        lines[numberLine - 1] = ConvertArraytoString(ConvertObjectCardToArray(card));
-
-        // Reescreve o arquivo
-        File.WriteAllLines(Path + Name + Extension, lines);
-    }
-
-   public void RemvoeLineById(string id)
-   {
-
-        RemoveLineArquivo(GetLineNumbeById(id));
-   }
-
     public void addObjectCard(Cards card)
     {
         /* 
@@ -146,12 +141,40 @@ public class FileCsv : Arquivo
         RecordMensage(ConvertArraytoString(lineCard));
     }
 
+    public void UpdateLineById(string id, Cards card)
+    {
+        /* 
+            Atualizar a linha do arquivo tem o id informado.
+            Parâmetro:
+                id - id da linha que deseja atualizar.
+         */
+
+        string[] arrayCard = ConvertObjectCardToArray(card);
+
+        UpdateLineArquivo(GetLineNumbeById(id), ConvertArraytoString(arrayCard));
+    }
+
+    public void RemvoeLineById(string id)
+   {
+        /* 
+            Apaga a linha do arquivo tem o id informado.
+            Parâmetro:
+                id - id da linha que deseja apagar.
+         */
+
+        RemoveLineArquivo(GetLineNumbeById(id));
+   }
+
+    
+
     //Methods de auxilio da classe fileCsv
     private string ConvertArraytoString(string[] array)
     {
         /* 
             Converte um array em uma string.
             usada para transformar um array em uma string para ser escrita na linha do arquivo.
+            Parâmetro:
+                array - array de strings
         */
         string mensagem = "";
 
@@ -171,6 +194,8 @@ public class FileCsv : Arquivo
         /* 
             Converte uma string em um array.
             usada para transformar uma linha do arquivo em um array.
+            Parâmetro:
+                str - string com o ";" para ser separado no array
         */
         string[] array = str.Split(";");
         return array;
@@ -178,26 +203,27 @@ public class FileCsv : Arquivo
 
     private string[] ConvertObjectCardToArray(Cards card)
     {
+        /* 
+            Convert um objeto card em um array.
+        */
+
         string[] array = new string[4];
-        array[0] = Convert.ToString(_id);
+
+        // Se o id já estive sido informado irá atribuir manualmente este id ao array
+        // caso o contrário será feito autamático.
+
+        if(card.Id != 0)
+            array[0] = Convert.ToString(card.Id);
+        else
+            array[0] = Convert.ToString(_id);
+
         array[1] = card.CardFront;
         array[2] = card.CardBack;
         array[3] = card.Stats;
 
         return array;
     }
-
-    private string[] ConvertObjectCardToArray(Cards card, string id)
-    {
-        string[] array = new string[4];
-        array[0] = Convert.ToString(id);
-        array[1] = card.CardFront;
-        array[2] = card.CardBack;
-        array[3] = card.Stats;
-
-        return array;
-    }
-    
+  
     private int GetCurrentId()
     {
         /* 
@@ -213,7 +239,7 @@ public class FileCsv : Arquivo
         return Convert.ToInt32(arrayLastLine[0]);
     }
     
-    public string GetLineByid(string id)
+    public string GetLineById(string id)
     {
         /* 
             Recebe um id, e retornar a linha que possui este id caso encontre
@@ -256,9 +282,15 @@ public class FileCsv : Arquivo
 
     private int GetLineNumbeById(string id)
     {
+        /* 
+            Retorna o número da linha que tem o id informado no arquivo
+            Parâmetro:
+                id - string numérico 
+        */
+
         string[] linesStrings = ReadAllLinesArquivo();
 
-        string lineWished = GetLineByid(id);
+        string lineWished = GetLineById(id);
 
         for(int i = 0; i < linesStrings.Length; i++)
         {
@@ -271,5 +303,6 @@ public class FileCsv : Arquivo
 
         return -1;
     }
+
 
 }

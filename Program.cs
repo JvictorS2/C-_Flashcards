@@ -1,4 +1,5 @@
-using TricksFile;
+﻿using TricksFile;
+#nullable disable
 
 void PrintWellcome()
 {
@@ -33,7 +34,7 @@ void AddCard(FileCsv fileCsv)
     Cards card = new Cards(front, back);
 
     fileCsv.addObjectCard(card);
-    fileCsv.CloseArquivo();
+    
     WriteLine("");
 }
 
@@ -52,7 +53,7 @@ void RemoveCard(FileCsv fileCsv)
         isvalid = true;
 
         WriteLine("Type the id of card that you want remove for you deck: ");
-        Write("Obs: apenas números e 0 para cancelar: ");
+        Write("Tip: only numbers and type 0 to back the manu: ");
 
         id = ReadLine();
 
@@ -66,7 +67,7 @@ void RemoveCard(FileCsv fileCsv)
         }
 
         // Valid if the id exist
-        if (fileCsv.GetLineByid(Convert.ToString(id)) == null)
+        if (fileCsv.GetLineById(Convert.ToString(id)) == null)
         {
             isvalid = false;
             WriteLine();
@@ -87,8 +88,56 @@ void UpdateCard(FileCsv fileCsv)
         Update a card
         
     */
-}
 
+    // Validing input.
+    bool isvalid;
+    string id = null;
+
+    do
+    {
+        isvalid = true;
+
+        WriteLine("Type the id of card that you want remove for you deck: ");
+        Write("Tip: only numbers and type 0 to back the manu: ");
+
+        id = ReadLine();
+
+        // back to menu
+        if (id.Equals("0"))
+        {
+            WriteLine();
+            WriteLine("Backing to menu...");
+            WriteLine();
+            return;
+        }
+
+        // Valid if the id exist
+        if (fileCsv.GetLineById(Convert.ToString(id)) == null)
+        {
+            isvalid = false;
+            WriteLine();
+            WriteLine("Sorry, Your id wasn't found, try again.");
+            WriteLine();
+        }
+
+    }
+    while (!isvalid);
+
+    WriteLine();
+    Write("Type front of card: ");
+    string front = ReadLine();
+
+    Write("Type back of card: ");
+    string back = ReadLine();
+
+    Cards card = new Cards(front, back,Convert.ToInt32(id));
+
+    fileCsv.UpdateLineById(id, card);
+
+    WriteLine();
+    WriteLine("Your card has updated!");
+    WriteLine();
+}
 
 
 void main()
@@ -107,7 +156,7 @@ void main()
     int opcao = -1;
     do
     {
-        
+        WriteLine();
         PrintWellcome();
         
         try
@@ -152,7 +201,12 @@ void main()
 
             // Read all deck
             case 5:
+            // Todo*: Execption if the file is empty or not exist
                 fileCsv.ReadArquivo();
+                break;
+
+            case 0:
+                WriteLine("Thanks, get well S2!");
                 break;
 
             default:
@@ -165,9 +219,10 @@ void main()
 
     }
     while (!(opcao == 0));
-
-    WriteLine("Thanks, get well S2!");
 }
 
 
 main();
+
+
+

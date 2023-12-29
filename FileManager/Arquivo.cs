@@ -70,12 +70,16 @@ public class Arquivo
         Path = path;
     }
 
-    //Method
+    //Methods
+
+    // CRUD ---------------------------------------------------
     public virtual void CreatOpenArquivo(bool resert=true)
     {
         /* 
             Cria um arquivo no caminho informado. o parâmetro é a extensão do arquivo.
             Dev tip: Ele pode sofre overrider por classe filhas.
+            Parâmetro:
+                resert - define se o arquivo irá ser reescrito do zero (false) ou irá ser escrito normalmente (true - default)
          */
         
         _sw = new StreamWriter(Path + Name + Extension, resert, Encoding.UTF8);
@@ -106,12 +110,21 @@ public class Arquivo
     {
         /* 
             Grava uma mensagem no arquivo.
+            Parâmetro:
+                mensage - texto que será gravado no aquivo.
          */
         _sw.WriteLine(mensage);
     }
 
     public void RemoveLineArquivo(int whichLine)
     {
+        /*  
+            Apaga uma linha do arquivo
+            parâmetro:
+                whichLine - número da linha que irá ser apagada do arquivo
+
+        */
+
         // Lê todas as linhas do arquivo, exceto a que queremos excluir
         var lines = ReadAllLinesArquivo();
 
@@ -122,7 +135,28 @@ public class Arquivo
         File.WriteAllLines(Path + Name + Extension, lines);
 
     }
-    
+
+    public void UpdateLineArquivo(int whichLine, string newline)
+    {
+        /* 
+            Atualiza uma linha do arquivo.
+            parâmetro:
+                numberline - linha que deseja autlaizar
+                newline - texto que irá substituir a linha escolhida
+        */
+
+        //Converte todas as linhas do arquivo em um array
+        string[] lines = ReadAllLinesArquivo();
+
+        //Atualiza a linha desejada
+        lines[whichLine - 1] = newline;
+
+        // Reescreve o arquivo
+        File.WriteAllLines(Path + Name + Extension, lines);
+    }
+
+    // CRUD ----------------------------------------------------
+
     public void CloseArquivo()
     {
         /* 
